@@ -2,6 +2,8 @@
 
 This README provides instructions for setting up a media server using Docker Compose with various services like Plex, Sonarr, Radarr, and more. The configuration ensures that all services run smoothly on a local network with appropriate data persistence.
 
+![Architecture](/architecture.drawio.svg)
+
 ## Table of Contents
 
 - [Media Server Docker Compose Setup](#media-server-docker-compose-setup)
