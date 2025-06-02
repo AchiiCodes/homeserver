@@ -13,6 +13,8 @@
 
 This README describes a homelab setup using Docker Compose to manage and automate downloading, requesting, and organizing movies and TV series. The configuration brings together services like Plex, Sonarr, Radarr, and others to provide a seamless media server experience with persistent storage and easy access on your local network.
 
+![Architecture](/architecture.drawio.svg)
+
 ## Prerequisites
 
 - Docker installed on your system.
