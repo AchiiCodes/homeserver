@@ -1,19 +1,17 @@
-# Medialab Docker Compose Setup
+# Medialab
 
-This README provides instructions for setting up a media server using Docker Compose with various services like Plex, Sonarr, Radarr, and more. The configuration ensures that all services run smoothly on a local network with appropriate data persistence.
+[![Docker Compose](https://img.shields.io/badge/Docker--Compose-blue?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+![sonarr Badge](https://img.shields.io/badge/sonarr-2596BE?logo=sonarr&logoColor=fff&style=flat)
+![Homarr Badge](https://img.shields.io/badge/Homarr-FA5252?logo=homarr&logoColor=fff&style=flat)
+![radarr Badge](https://img.shields.io/badge/radarr-FFCB3D?logo=radarr&logoColor=000&style=flat)  
+![Plex Badge](https://img.shields.io/badge/Plex-EBAF00?logo=plex&logoColor=fff&style=flat)
+[![Prowlarr](https://img.shields.io/badge/Prowlarr-22223b?logo=prowlarr&logoColor=white)](https://prowlarr.com/)
+![qbittorrent Badge](https://img.shields.io/badge/qbittorrent-2F67BA?logo=qbittorrent&logoColor=fff&style=flat)
+[![Requestrr](https://img.shields.io/badge/Requestrr-4B8DF8?logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB2aWV3Qm94PSIwIDAgMzAgMzAiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNSIgY3k9IjE1IiByPSIxNSIgZmlsbD0iIzRiOGRmOCIvPjxwYXRoIGQ9Ik0yMSAxM2gtNnYtM2MwLTEuMS0uOS0yLTItMnMtMiAuOS0yIDJ2M2gtNmMtMS4xIDAtMiAuOS0yIDJ2N2MwIDEuMS45IDIgMiAyaDE4YzEuMSAwIDItLjkgMi0ydi03YzAtMS4xLS45LTItMi0yem0tNiA2Yy0xLjEgMC0yLS45LTItMnMuOS0yIDItMiAyIC45IDIgMi0uOSAyLTItMnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=)](https://github.com/darkalfx/requestrr)
+![Nginx Proxy Manager Badge](https://img.shields.io/badge/Nginx%20Proxy%20Manager-F15833?logo=nginxproxymanager&logoColor=fff&style=flat)
+[![Overseerr](https://img.shields.io/badge/Overseerr-FF6C2C?logo=overseerr&logoColor=white)](https://overseerr.dev/)
 
-![Architecture](/architecture.drawio.svg)
-
-## Table of Contents
-
-- [Media Server Docker Compose Setup](#media-server-docker-compose-setup)
-  - [Table of Contents](#table-of-contents)
-  - [Prerequisites](#prerequisites)
-  - [Configuration](#configuration)
-    - [Volumes](#volumes)
-    - [Networks](#networks)
-    - [Services](#services)
-  - [Usage](#usage)
+This README describes a homelab setup using Docker Compose to manage and automate downloading, requesting, and organizing movies and TV series. The configuration brings together services like Plex, Sonarr, Radarr, and others to provide a seamless media server experience with persistent storage and easy access on your local network.
 
 ## Prerequisites
 
@@ -21,130 +19,24 @@ This README provides instructions for setting up a media server using Docker Com
 - Docker Compose installed.
 - Appropriate folder structure on your host machine.
 
-## Configuration
-
-### Volumes
-
-The following volumes are defined to persist data:
-
-- `plex-data`: Binds to `d:/media`.
-- `download-data`: Binds to `d:/media/downloads`.
-- `shows-data`: Binds to `d:/media/shows`.
-- `movies-data`: Binds to `d:/media/movies`.
-
-### Networks
-
-A single bridge network named `homeserver` is used to connect all services.
-
-### Services
-
-This setup includes the following services:
-
-1. **Homarr**
-   - **Image**: `ghcr.io/ajnart/homarr:latest`
-   - **Ports**: `7575:7575`
-   - **Volumes**: 
-     - `/var/run/docker.sock`
-     - `./config/docker/homarr/configs:/app/data/configs`
-     - `./config/docker/homarr/icons:/app/public/icons`
-     - `./config/docker/homarr/data:/data`
-   - **Network**: `homeserver`
-
-2. **Plex**
-   - **Image**: `lscr.io/linuxserver/plex:latest`
-   - **Ports**: `32400:32400`
-   - **Volumes**:
-     - `./config/docker/plex/config:/config`
-     - `plex-data:/media`
-   - **Network**: `homeserver`
-
-3. **Portainer**
-   - **Image**: `portainer/portainer-ce:alpine`
-   - **Ports**: `9000:9000`
-   - **Volumes**:
-     - `/var/run/docker.sock:/var/run/docker.sock`
-   - **Network**: `homeserver`
-
-4. **Sonarr**
-   - **Image**: `lscr.io/linuxserver/sonarr:latest`
-   - **Ports**: `8989:8989`
-   - **Volumes**:
-     - `./config/docker/sonarr/data:/config`
-     - `download-data:/downloads`
-     - `shows-data:/shows`
-   - **Network**: `homeserver`
-
-5. **Radarr**
-   - **Image**: `lscr.io/linuxserver/radarr:latest`
-   - **Ports**: `7878:7878`
-   - **Volumes**:
-     - `./config/docker/radarr/data:/config`
-     - `download-data:/downloads`
-     - `movies-data:/movies`
-   - **Network**: `homeserver`
-
-6. **Prowlarr**
-   - **Image**: `lscr.io/linuxserver/prowlarr:latest`
-   - **Ports**: `9696:9696`
-   - **Volumes**:
-     - `./config/docker/prowlarr/data:/config`
-   - **Network**: `homeserver`
-
-7. **qBittorrent**
-   - **Image**: `linuxserver/qbittorrent:version-4.6.0-r0`
-   - **Ports**: `8090:8090`
-   - **Volumes**:
-     - `./config/docker/provision/qbittorrent:/config`
-     - `download-data:/downloads`
-   - **Network**: `homeserver`
-
-8. **Requestrr**
-   - **Image**: `thomst08/requestrr:latest`
-   - **Ports**: `4545:4545`
-   - **Volumes**:
-     - `./config/docker/requestrr/config:/root/config`
-   - **Network**: `homeserver`
-
-9. **Proxy**
-   - **Image**: `jc21/nginx-proxy-manager:latest`
-   - **Ports**: `80:80`, `81:81`, `443:443`
-   - **Volumes**:
-     - `./config/docker/proxy/data:/data`
-     - `./config/docker/proxy/letsencrypt:/etc/letsencrypt`
-   - **Network**: `homeserver`
-
-  10. **Overseerr**
-    - **Image**: `sctx/overseerr:1.34.0`
-    - **Ports**: `5055:5055`
-    - **Volumes**:
-      - `./config/docker/overseerr:/app/config`
-    - **Environment**:
-      - `LOG_LEVEL=debug`
-      - `TZ=Europe/Amsterdam`
-      - `PORT=5055` (optional)
-    - **Restart Policy**: `unless-stopped`
-    - **Network**: `homeserver`
-
-  ### Service URLs
-
-  | Service      | URL                                  |
-  |--------------|--------------------------------------|
-  | Homarr       | http://localhost:7575                |
-  | Plex         | http://localhost:32400/web           |
-  | Portainer    | http://localhost:9000                |
-  | Sonarr       | http://localhost:8989                |
-  | Radarr       | http://localhost:7878                |
-  | Prowlarr     | http://localhost:9696                |
-  | qBittorrent  | http://localhost:8090                |
-  | Requestrr    | http://localhost:4545                |
-  | Proxy (NPM)  | http://localhost:81 (admin UI)       |
-  | Overseerr    | http://localhost:5055                |
-
 
 ## Usage
 
 1. Clone the repository or copy the `docker-compose.yml` file to your working directory.
 2. Ensure the folder structure on your host machine matches the volume bindings.
-3. Run the following command to start all services:
-   ```bash
-   docker-compose up -d
+3. Run the following command to start all services: ```docker-compose up -d```
+
+### Service URLs
+
+| Service      | URL                                  |
+|--------------|--------------------------------------|
+| Homarr       | http://localhost:7575                |
+| Plex         | http://localhost:32400/web           |
+| Portainer    | http://localhost:9000                |
+| Sonarr       | http://localhost:8989                |
+| Radarr       | http://localhost:7878                |
+| Prowlarr     | http://localhost:9696                |
+| qBittorrent  | http://localhost:8090                |
+| Requestrr    | http://localhost:4545                |
+| Proxy (NPM)  | http://localhost:81 (admin UI)       |
+| Overseerr    | http://localhost:5055                |
