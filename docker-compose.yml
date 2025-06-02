@@ -160,7 +160,7 @@ services:
       - home_server
 
   requestrr:
-    image: thomst08/requestrr:latest
+    image: thomst08/requestrr:v2.1.7
     container_name: requestrr
     environment:
       - PUID=1000
