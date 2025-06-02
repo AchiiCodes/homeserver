@@ -1,4 +1,4 @@
-# Media Server Docker Compose Setup
+# Medialab Docker Compose Setup
 
 This README provides instructions for setting up a media server using Docker Compose with various services like Plex, Sonarr, Radarr, and more. The configuration ensures that all services run smoothly on a local network with appropriate data persistence.
 
@@ -112,6 +112,34 @@ This setup includes the following services:
      - `./config/docker/proxy/data:/data`
      - `./config/docker/proxy/letsencrypt:/etc/letsencrypt`
    - **Network**: `homeserver`
+
+  10. **Overseerr**
+    - **Image**: `sctx/overseerr:1.34.0`
+    - **Ports**: `5055:5055`
+    - **Volumes**:
+      - `./config/docker/overseerr:/app/config`
+    - **Environment**:
+      - `LOG_LEVEL=debug`
+      - `TZ=Europe/Amsterdam`
+      - `PORT=5055` (optional)
+    - **Restart Policy**: `unless-stopped`
+    - **Network**: `homeserver`
+
+  ### Service URLs
+
+  | Service      | URL                                  |
+  |--------------|--------------------------------------|
+  | Homarr       | http://localhost:7575                |
+  | Plex         | http://localhost:32400/web           |
+  | Portainer    | http://localhost:9000                |
+  | Sonarr       | http://localhost:8989                |
+  | Radarr       | http://localhost:7878                |
+  | Prowlarr     | http://localhost:9696                |
+  | qBittorrent  | http://localhost:8090                |
+  | Requestrr    | http://localhost:4545                |
+  | Proxy (NPM)  | http://localhost:81 (admin UI)       |
+  | Overseerr    | http://localhost:5055                |
+
 
 ## Usage
 
