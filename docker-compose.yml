@@ -1,4 +1,5 @@
 version: '3.9'
+name: homelab
 
 volumes:
   plex-data:
@@ -61,18 +62,6 @@ services:
     ports:
       - 32400:32400 # Plex
     restart: unless-stopped
-    networks:
-      - home_server
-
-  portainer:
-    image: portainer/portainer-ce:2.30.1-alpine
-    container_name: portainer
-    command: -H unix:///var/run/docker.sock
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    restart: always
-    ports:
-      - 9000:9000
     networks:
       - home_server
 

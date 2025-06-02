@@ -1,0 +1,14 @@
+version: '3.9'
+name: homedev
+
+services:
+
+  portainer:
+    image: portainer/portainer-ce:2.30.1-alpine
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: always
+    ports:
+      - 9000:9000
