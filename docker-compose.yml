@@ -1,36 +1,4 @@
-version: '3.9'
 name: homelab
-
-volumes:
-  plex-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: d:/media
-      o: bind
-  download-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: d:/media/downloads
-      o: bind
-  shows-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: d:/media/shows
-      o: bind
-  movies-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: d:/media/movies
-      o: bind
-
-networks:
-  home_server:
-    name: homeserver
-    driver: bridge
 
 services:
   homarr:
@@ -39,140 +7,130 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config/docker/homarr/configs:/app/data/configs
-      - ./config/docker/homarr/icons:/app/public/icons
-      - ./config/docker/homarr/data:/data
+      - ${CONFIG_FOLDER}/homarr/configs:/app/data/configs
+      - ${CONFIG_FOLDER}/homarr/icons:/app/public/icons
+      - ${CONFIG_FOLDER}/homarr/data:/data
     ports:
       - 7575:7575
-    networks:
-      - home_server
 
   plex:
     image: lscr.io/linuxserver/plex:1.41.7
     container_name: plex
     environment:
-      - PGID=1000
-      - PUID=1024
-      - VERSION=docker
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - VERSION=${VERSION}
     volumes:
-      - ./config/docker/plex/config:/config
-      - plex-data:/media
+      - ${CONFIG_FOLDER}/plex/config:/config
+      - ${MEDIA_FOLDER}:/media
     ports:
       - 32400:32400
     restart: unless-stopped
-    networks:
-      - home_server
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:4.0.14
     container_name: sonarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ./config/docker/sonarr/data:/config
-      - download-data:/downloads
-      - shows-data:/shows
+      - ${CONFIG_FOLDER}/sonarr/data:/config
+      - ${MEDIA_FOLDER}/downloads:/downloads
+      - ${MEDIA_FOLDER}/shows:/shows
     restart: unless-stopped
     ports:
       - 8989:8989
-    networks:
-      - home_server
 
   radarr:
     image: lscr.io/linuxserver/radarr:5.26.1-nightly
     container_name: radarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ./config/docker/radarr/data:/config
-      - download-data:/downloads
-      - movies-data:/movies
+      - ${CONFIG_FOLDER}/radarr/data:/config
+      - ${MEDIA_FOLDER}/downloads:/downloads
+      - ${MEDIA_FOLDER}/movies:/movies
     restart: unless-stopped
     ports:
       - 7878:7878
-    networks:
-      - home_server
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:1.36.3
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ./config/docker/prowlarr/data:/config
+      - ${CONFIG_FOLDER}/prowlarr/data:/config
     restart: unless-stopped
     ports:
       - 9696:9696
-    networks:
-      - home_server
 
   qbittorrent:
     image: linuxserver/qbittorrent:5.1.0
     container_name: qbittorrent
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - UMASK=022
       - WEBUI_PORT=8090
     volumes:
-      - ./config/docker/provision/qbittorrent:/config
-      - download-data:/downloads
+      - ${CONFIG_FOLDER}/provision/qbittorrent:/config
+      - ${MEDIA_FOLDER}/downloads:/downloads
     restart: unless-stopped
     ports:
       - 8090:8090
-    networks:
-      - home_server
 
   overseerr:
     image: sctx/overseerr:1.34.0
     container_name: overseerr
     environment:
-      - LOG_LEVEL=debug
-      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - PORT=5055
     ports:
       - 5055:5055
     volumes:
-      - ./config/docker/overseerr:/app/config
+      - ${CONFIG_FOLDER}/overseerr:/app/config
     restart: unless-stopped
-    networks:
-      - home_server
 
   requestrr:
     image: thomst08/requestrr:v2.1.7
     container_name: requestrr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ./config/docker/requestrr/config:/root/config
+      - ${CONFIG_FOLDER}/requestrr/config:/root/config
     ports:
       - 4545:4545
     restart: unless-stopped
-    networks:
-      - home_server
 
-  proxy:
+  npm:
     image: jc21/nginx-proxy-manager:2.12.3
-    container_name: proxy
+    container_name: npm
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     ports:
       - 80:80
       - 81:81
       - 443:443
     volumes:
-      - ./config/docker/proxy/data:/data
-      - ./config/docker/proxy/letsencrypt:/etc/letsencrypt
-    networks:
-      - home_server
+      - ${CONFIG_FOLDER}/proxy/data:/data
+      - ${CONFIG_FOLDER}/proxy/letsencrypt:/etc/letsencrypt
+
+networks:
+  default:
+    name: homeserver
+    driver: bridge

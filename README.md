@@ -13,20 +13,22 @@
 
 This README describes a homelab setup using Docker Compose to manage and automate downloading, requesting, and organizing movies and TV series. The configuration brings together services like Plex, Sonarr, Radarr, and others to provide a seamless media server experience with persistent storage and easy access on your local network.
 
-![Architecture](/docs/architecture.drawio.png)
+![Architecture](/docs/img/architecture.drawio.png)
 
 ## Prerequisites
 
-- Docker installed on your system.
-- Docker Compose installed.
-- Appropriate folder structure on your host machine.
-
+- [Docker](https://www.docker.com/) installed on your system.
+- [Docker Compose](https://docs.docker.com/compose/) installed.
 
 ## Usage
 
 1. Clone the repository or copy the `docker-compose.yml` file to your working directory.
-2. Ensure the folder structure on your host machine matches the volume bindings.
-3. Run the following command to start all services: ```docker-compose up -d```
+2. Copy `example.env` to `.env` and fill in the values according to your preferences.
+3. Ensure the folder structure on your host machine matches the volume bindings.
+4. Run the following command to start all services:  
+    ```sh
+    docker-compose up -d
+    ```
 
 ### Service URLs
 
